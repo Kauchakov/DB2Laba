@@ -1,6 +1,6 @@
---Персональные данные
+--РџРµСЂСЃРѕРЅР°Р»СЊРЅС‹Рµ РґР°РЅРЅС‹Рµ
 create table PersonalData(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 
 	first_name varchar(25) NOT NULL,
 	surname varchar(25) NOT NULL,
@@ -9,62 +9,71 @@ create table PersonalData(
 	birthday date NOT NULL,
 	gender varchar(7) NOT NULL,
 	nationality varchar(25) NOT NULL,
-	criminal_records bit NOT NULL,
+	criminal_records boolean NOT NULL,
 
 	series int NOT NULL,
 	number int NOT NULL,
-	issued_by varchar(50) NOT NULL,
+	issued_by varchar(50) NOT NULL
 );
 
---Личное дело
+--Р›РёС‡РЅРѕРµ РґРµР»Рѕ
 create table PersonalAffair(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	personal_affair int UNIQUE NOT NULL,
 	id_personal_data integer references PersonalData(id) ON DELETE CASCADE UNIQUE NOT NULL
 );
 
---Медицинское заключение
+--РњРµРґРёС†РёРЅСЃРєРѕРµ Р·Р°РєР»СЋС‡РµРЅРёРµ
 create table MedicalReport(
-	id int IDENTITY(1,1) primary key NOT NULL,
-	medical_report_result varchar(15) NOT NULL,
+	id serial primary key,
+	medical_report_result varchar(20) NOT NULL,
 	id_personal_affair integer references PersonalAffair(id) ON DELETE CASCADE UNIQUE NOT NULL
 );
 
---Врач
+--Р’СЂР°С‡
 create table DoctorReport(
-	id int IDENTITY(1,1) primary key NOT NULL,
+	id serial primary key,
 	specialization varchar(30) NOT NULL,
 	doctor_report varchar(15) NOT NULL,
 	id_medical_report integer references MedicalReport(id) ON DELETE CASCADE NOT NULL
 );
 
---Военный билет
+--Р’РѕРµРЅРЅС‹Р№ Р±РёР»РµС‚
 create table MilitaryTicket(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	date_of_start_military_service date NOT NULL,
 	date_of_end_military_service date,
+	rank_on_army varchar(20),
 	id_personal_affair integer references PersonalAffair(id) ON DELETE CASCADE UNIQUE NOT NULL
 );
 
---Военная часть
+--Р’РѕРµРЅРЅР°СЏ С‡Р°СЃС‚СЊ
 create table MilitaryUnit(
-	id int IDENTITY(1,1) NOT NULL primary key, 
+	id serial primary key, 
 	place_of_military_service varchar(50) NOT NULL,
 	id_military_ticket integer references MilitaryTicket(id) ON DELETE CASCADE NOT NULL
 );
 
---Приписное удостоверение
+--РџСЂРёРїРёСЃРЅРѕРµ СѓРґРѕСЃС‚РѕРІРµСЂРµРЅРёРµ
 create table AscribedCertificate(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	registration_date date NOT NULL,
 	deregistration_date date,
+	deregistration_reason varchar(30),
+	pass_to_serve varchar(20),
 	id_personal_affair integer references PersonalAffair(id) ON DELETE CASCADE UNIQUE NOT NULL
 );
 
+create table Conscription(
+	id serial primary key,
+	conscription_season varchar(8) NOT NULL,
+	conscription_date date NOT NULL,
+	id_personal_affair integer references PersonalAffair(id) ON DELETE CASCADE NOT NULL
+);
 
---Адрес проживания
+--РђРґСЂРµСЃ РїСЂРѕР¶РёРІР°РЅРёСЏ
 create table LivindAddress(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	region varchar(30) NOT NULL,
 	city varchar(30) NOT NULL,
 	street varchar(30) NOT NULL,
@@ -73,36 +82,36 @@ create table LivindAddress(
 	apartment int,
 	id_personal_data integer references PersonalData(id) ON DELETE CASCADE NOT NULL
 );
---Образование
+--РћР±СЂР°Р·РѕРІР°РЅРёРµ
 create table Education(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	degree varchar(50),
 	institution varchar(50),
 	id_personal_data integer references PersonalData(id) ON DELETE CASCADE NOT NULL
 );
 
---Занятость
+--Р—Р°РЅСЏС‚РѕСЃС‚СЊ
 create table Employment(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	work_place varchar(50),
 	field_of_activity varchar(50),
-	state_accreditation bit,
+	state_accreditation boolean,
 	id_personal_data integer references PersonalData(id) ON DELETE CASCADE NOT NULL
 );
 
 
---Призывник
+--РџСЂРёР·С‹РІРЅРёРє
 create table Recruit (
-	id int IDENTITY(1,1) NOT NULL primary key,
-	family_full varchar(13) NOT NULL,
-	id_personal_affair integer references PersonalAffair(id) ON DELETE CASCADE UNIQUE NOT NULL,
+	id serial primary key,
+	family_full varchar(13),
+	id_personal_affair integer references PersonalAffair(id) ON DELETE CASCADE UNIQUE NOT NULL
 );
 
---Родственник
+--Р РѕРґСЃС‚РІРµРЅРЅРёРє
 create table Relatives(
-	id int IDENTITY(1,1) NOT NULL primary key,
+	id serial primary key,
 	kinship varchar(20) NOT NULL,
 	generation int NOT NULL,
 	id_personal_data integer references PersonalData(id) ON DELETE CASCADE UNIQUE NOT NULL, 
-	id_recruit integer references Recruit(id) ON DELETE CASCADE NOT NULL,
+	id_recruit integer references Recruit(id) ON DELETE CASCADE NOT NULL
 );
