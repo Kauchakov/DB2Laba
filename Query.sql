@@ -5,27 +5,30 @@
 select PersonalData.first_name,
 		PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AscribedCertificate.pass_to_serve,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
-		LivindAddress.region,
-		LivindAddress.city,
-		LivindAddress.street,
-		LivindAddress.house,
-		LivindAddress.apartment
+		LivingAddress.region,
+		LivingAddress.city,
+		LivingAddress.street,
+		LivingAddress.house,
+		LivingAddress.apartment
 from PersonalData 
-join LivindAddress on LivindAddress.id_personal_data = PersonalData.id
-join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id;
+join LivingAddress on LivingAddress.id_personal_data = PersonalData.id
+join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
+join AscribedCertificate on AscribedCertificate.id_personal_affair = PersonalAffair.id;
 
 --2. Всех призывников со статусом годен
 select PersonalData.first_name,
 		PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
-		PersonalData.gender
+		AGE(current_date, PersonalData.birthday) as age,
+		PersonalData.gender,
+		AscribedCertificate.pass_to_serve
 from PersonalData
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
 join AscribedCertificate on AscribedCertificate.id_personal_affair = PersonalAffair.id
-where AscribedCertificate.pass_to_serve = 'годен';
+where AscribedCertificate.pass_to_serve = 'не годен';
 
 --3. Все родственники определённого призывника
 select Relatives.kinship,
@@ -42,18 +45,18 @@ AND Relatives.id_recruit = 1;
 select PersonalData.first_name,
 		PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender
 from PersonalData
-join LivindAddress on LivindAddress.id_personal_data = PersonalData.id
+join LivingAddress on LivingAddress.id_personal_data = PersonalData.id
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
-where LivindAddress.city = 'Новокузнецк';
+where LivingAddress.city = 'Новокузнецк';
 
 --5. Список призывников в настоящее время служащих в армии
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		MilitaryTicket.date_of_start_military_service
 from PersonalData
@@ -65,7 +68,7 @@ where MilitaryTicket.date_of_end_military_service is null;
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender
 from PersonalData
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
@@ -76,16 +79,16 @@ where MedicalReport.medical_report_result = 'ограниченно годен';
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender
 from PersonalData
-where extract(year from (AGE(now(), PersonalData.birthday))) = 19;
+where extract(year from (AGE(current_date, PersonalData.birthday))) = 19;
 
 --8. Найти родителей призывника
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender
 from PersonalData
 join Relatives on Relatives.id_personal_data = PersonalData.id
@@ -101,13 +104,13 @@ select PersonalData.first_name,
 		PersonalData.birthday
 from PersonalData
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
-where PersonalData.birthday = '2003-07-10';
+where PersonalData.birthday = '2003-01-31';
 
 --10. Найти призывников из указанной военной части
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender
 from PersonalData
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
@@ -129,13 +132,13 @@ where PersonalData.surname = 'Каучаков';
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday
 from PersonalData
-join LivindAddress on LivindAddress.id_personal_data = PersonalData.id
+join LivingAddress on LivingAddress.id_personal_data = PersonalData.id
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
-where LivindAddress.region = 'Кемеровская область';
+where LivingAddress.region = 'Кемеровская область';
 
 --13. Список родственников призывника с одинаковой датой рождения
 select PersonalData.first_name,
@@ -151,7 +154,7 @@ where PersonalData.birthday = '1960-12-03';
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday
 from PersonalData
@@ -167,18 +170,18 @@ select PersonalData.first_name,
 		PersonalData.gender
 from PersonalData
 join Relatives on Relatives.id_personal_data = PersonalData.id
-join LivindAddress on LivindAddress.id_personal_data = PersonalData.id
-where LivindAddress.region = 'Кемеровская область' and
-	  LivindAddress.city = 'Новокузнецк' and
-	  LivindAddress.street = 'Кирова' and
-	  LivindAddress.house = '103' and
-	  LivindAddress.apartment = '173';
+join LivingAddress on LivingAddress.id_personal_data = PersonalData.id
+where LivingAddress.region = 'Кемеровская область' and
+	  LivingAddress.city = 'Новокузнецк' and
+	  LivingAddress.street = 'Кирова' and
+	  LivingAddress.house = '103' and
+	  LivingAddress.apartment = '173';
 
 --16. Призывники с военным билетом
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday
 from PersonalData
@@ -196,18 +199,19 @@ from PersonalData
 join Relatives on Relatives.id_personal_data = PersonalData.id
 where PersonalData.nationality = 'русский';
 
---18. Призывники которых усыновили //НЕ СДЕЛАНО
-select PersonalData.first_name,
+--18. Призывники которых усыновили 
+select distinct PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday
 from PersonalData
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
-join Relatives on Relatives.id_personal_data = PersonalData.id
-                and Relatives.kinship = 'мать'
-                 and Relatives.kinship = 'отец';
+join Recruit on Recruit.id_personal_affair = PersonalAffair.id	
+join Relatives on Relatives.id_recruit = Recruit.id
+                and Relatives.kinship = 'Мачеха'
+                 and Relatives.kinship = 'Отчим';
 
 --19. Родственники с высшем образованием
 select PersonalData.first_name,
@@ -224,7 +228,7 @@ where Education.degree = 'Высшее';
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday,
 		MilitaryTicket.rank_on_army
@@ -233,22 +237,20 @@ join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
 join MilitaryTicket on MilitaryTicket.id_personal_affair = PersonalAffair.id
 where MilitaryTicket.rank_on_army is not null;
 
---21. 3 колено  //НЕ СДЕЛАНО
-select PersonalData.first_name,
+--21. 3 колено 
+select distinct PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		datediff(YEAR,PersonalData.birthday, '2023-05-26') as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday
 from PersonalData
-join LivindAddress on LivindAddress.id_personal_data = PersonalData.id
-				and LivindAddress.region = 'Кемеровская область'
+join LivingAddress on LivingAddress.id_personal_data = PersonalData.id
+				and LivingAddress.region = 'Кемеровская область'
 join PersonalAffair on PersonalAffair.id_personal_data = PersonalData.id
-join Recruit on Recruit.id_personal_affair = PersonalAffair.id
-join Relatives on Relatives.id_recruit = Recruit.id
-where Relatives.id_recruit = Recruit.id
-				and PersonalData.criminal_records = 0
-				and Relatives.generation <= 3;
+join Recruit on Recruit.id_personal_affair = PersonalAffair.id	
+left join Relatives on Relatives.id_recruit = Recruit.id
+					and Relatives.generation <= 3;
 
 
 --22. Призывники ФИО работающие в it без аккредетации
@@ -263,7 +265,7 @@ where Employment.field_of_activity = 'IT' and Employment.state_accreditation = f
 select PersonalData.first_name,
 	    PersonalData.surname,
 		PersonalData.father_name,
-		AGE(now(), PersonalData.birthday) as age,
+		AGE(current_date, PersonalData.birthday) as age,
 		PersonalData.gender,
 		PersonalData.birthday
 from PersonalData

@@ -16,8 +16,8 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger check_conscript_age
-after insert on recruit
+create trigger delete_recruit
+after insert or update on recruit
 for each row execute function delete_recruit();
 
 
@@ -37,30 +37,95 @@ before insert or update on ascribedcertificate
 for each row execute function check_differences_date();
 
 
---Автоматическое заполнения пункта "Тип семьи"
+--Автоматическое заполнения пункта "Тип семьи" ДЛЯ РЕКРУТА
 create or replace function family_type()
 returns trigger as $$
 declare
 	is_mother integer;
 	is_father integer;
+	family_full_tr varchar;
 begin
-	select count(*) into is_mother from relatives where relatives.id_recruit = new.id_recruit and relatives.kinship = 'Мать';
-	select count(*) into is_father from relatives where relatives.id_recruit = new.id_recruit and relatives.kinship = 'Отец';
+	select count(*) into is_mother from relatives where relatives.id_recruit = new.id and relatives.kinship = 'Мать';
+	select count(*) into is_father from relatives where relatives.id_recruit = new.id and relatives.kinship = 'Отец';
 	
 	if (is_mother = 1 and is_father = 1) then
-		update recruit set family_full = 'Полная' where id = new.id_recruit;
+		family_full_tr = 'Полная';
 	elsif ((is_mother = 1 and is_father = 0) or (is_mother = 0 and is_father = 1)) then
-		update recruit set family_full = 'Неполная' where id = new.id_recruit;
+		family_full_tr = 'Неполная';
 	elsif (is_mother = 0 and is_father = 0) then
-		update recruit set family_full = 'Одиночка' where id = new.id_recruit;
+		family_full_tr = 'Одиночка';
 	end if;
+	
+	update recruit set family_full = family_full_tr where id = new.id;
+	
 	return new;
 end;
 $$ language plpgsql;
 
 create trigger family_type
-after insert or update on relatives
+after insert on recruit
 for each row execute function family_type();
+
+
+--ДЛЯ РОДИТЕЛЯ
+create or replace function family_type_for_relative()
+returns trigger as $$
+declare
+	is_mother integer;
+	is_father integer;
+	family_full_tr varchar;
+begin
+	select count(*) into is_mother from relatives where relatives.id_recruit = new.id_recruit and relatives.kinship = 'Мать';
+	select count(*) into is_father from relatives where relatives.id_recruit = new.id_recruit and relatives.kinship = 'Отец';
+	
+	if (is_mother = 1 and is_father = 1) then
+		family_full_tr = 'Полная';
+	elsif ((is_mother = 1 and is_father = 0) or (is_mother = 0 and is_father = 1)) then
+		family_full_tr = 'Неполная';
+	elsif (is_mother = 0 and is_father = 0) then
+		family_full_tr = 'Одиночка';
+	end if;
+	
+	update recruit set family_full = family_full_tr where id = new.id_recruit;
+	
+	return new;
+end;
+$$ language plpgsql;
+
+create trigger family_type_for_relative
+after insert or update on relatives
+for each row execute function family_type_for_relative();
+
+
+
+--ДЛЯ РОДИТЕЛЯ ПРИ УДАЛЕНИИ
+create or replace function family_type_for_relative2()
+returns trigger as $$
+declare
+	is_mother integer;
+	is_father integer;
+	family_full_tr varchar;
+begin
+	select count(*) into is_mother from relatives where relatives.id_recruit = old.id_recruit and relatives.kinship = 'Мать';
+	select count(*) into is_father from relatives where relatives.id_recruit = old.id_recruit and relatives.kinship = 'Отец';
+	
+	if (is_mother = 1 and is_father = 1) then
+		family_full_tr = 'Полная';
+	elsif ((is_mother = 1 and is_father = 0) or (is_mother = 0 and is_father = 1)) then
+		family_full_tr = 'Неполная';
+	elsif (is_mother = 0 and is_father = 0) then
+		family_full_tr = 'Одиночка';
+	end if;
+	
+	update recruit set family_full = family_full_tr where id = old.id_recruit;
+	
+	return old;
+end;
+$$ language plpgsql;
+
+create trigger family_type_for_relative2
+after delete on relatives
+for each row execute function family_type_for_relative2();
 
 
 --Проверка что дата призыва не раньше 18 лет и не позже 27 лет
@@ -98,3 +163,19 @@ $$ language plpgsql;
 create trigger update_status
 before insert or update on medicalreport
 for each row execute function update_status();
+
+
+
+
+
+create or replace function alone()
+returns trigger as $$
+begin
+	new.family_full = 'Одиночка';
+	return new;
+end;
+$$ language plpgsql;
+
+create trigger alone
+before insert on recruit
+for each row execute function alone();

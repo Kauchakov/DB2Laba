@@ -4,7 +4,7 @@ select * from Recruit;
 select * from Relatives;
 select * from MedicalReport;
 select * from DoctorReport;
-select * from LivindAddress;
+select * from LivingAddress;
 select * from AscribedCertificate;
 select * from MilitaryTicket;
 select * from MilitaryUnit;
@@ -12,15 +12,22 @@ select * from Education;
 select * from Employment;
 select * from Conscription;
 
+
+insert into DoctorReport (specialization, doctor_report, id_medical_report) values ('хирург', 'годен', 4);
+insert into DoctorReport (specialization, doctor_report, id_medical_report) values ('терапевт', 'ограниченно годен', 4);
+insert into DoctorReport (specialization, doctor_report, id_medical_report) values ('невролог', 'ограниченно годен', 4);
+insert into DoctorReport (specialization, doctor_report, id_medical_report) values ('психиатр', 'не годен', 4);
+
 select count(*) from relatives where relatives.id_recruit = 1 and relatives.kinship = 'Отец';
 --Обновление родственников update Relatives set generation = generation;
 
 alter
 delete from AscribedCertificate where id = 13;
 insert into PersonalData (first_name, surname, father_name, birthday, gender, nationality, criminal_records, series, number, issued_by) values ('Александрdel', 'Каучаковdel', 'Владимировичdel', '2003-07-10', 'мужской', 'русский', false, '3217', '820095', 'OUFMS');
-insert into PersonalAffair(personal_affair, id_personal_data) values ('4', 14);
-insert into Recruit(id_personal_affair) values (10);
-insert into AscribedCertificate (registration_date, deregistration_date, id_personal_affair) values ('2010-09-16', '2015-08-15', 11);
+insert into PersonalAffair(personal_affair, id_personal_data) values ('26', 27);
+insert into Recruit(id_personal_affair) values (16);
+insert into Relatives(kinship, generation, id_personal_data, id_recruit) values ('Отец', 1, 24, 5);
+insert into AscribedCertificate (registration_date, deregistration_date, id_personal_affair) values ('2033-09-16', '2034-08-15', 16);
 
 update MilitaryTicket set rank_on_army = 'лейтенант' where id = 1;
 
@@ -30,12 +37,12 @@ update AscribedCertificate set pass_to_serve = 'не годен' where id = 3;
 
 update MilitaryUnit set place_of_military_service = 'Мотострелковые' where id = 1;
 update MilitaryUnit set place_of_military_service = 'Танковые' where id = 2;
-alter table AscribedCertificate alter column pass_to_serve type varchar(20);
+alter table DoctorReport alter column doctor_report type varchar(20);
 
 insert into Relatives(kinship, generation, id_personal_data, id_recruit) values ('Отецs', 1, 21, 1);
 
-
-
+update PersonalData set criminal_records = true where id = 2;
+update Recruit set id_persona
 
 
 --ПРИЗЫВНИК КАУЧАКОВ
@@ -65,10 +72,10 @@ insert into MedicalReport (medical_report_result, id_personal_affair) values ('�
 insert into AscribedCertificate (registration_date, id_personal_affair) values ('2021-09-16', 1);
 
 --Место жительства
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 1);
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 4);
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 5);
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '94', 6);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 1);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 4);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 5);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '94', 6);
 
 --Работы
 insert into Employment (work_place, field_of_activity, state_accreditation, id_personal_data) values ('Без Аккредитации', 'IT', false, 1);
@@ -86,6 +93,10 @@ insert into Education (degree, institution, id_personal_data) values ('Сред�
 insert into Education (degree, institution, id_personal_data) values ('Высшее', 'СибГИУ', 5);
 insert into Education (degree, institution, id_personal_data) values ('Среднее', 'Школа Новокузнецка №3', 6);
 insert into Education (degree, institution, id_personal_data) values ('Высшее', 'Вуз Новокузнецк', 6);
+
+
+
+
 
 --ПРИЗЫВНИК БОГОДУХОВ
 
@@ -110,8 +121,8 @@ insert into AscribedCertificate (registration_date, id_personal_affair) values (
 insert into MedicalReport (medical_report_result, id_personal_affair) values ('годен', 2);
 
 --Место жительства
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Ханты-Мансийкий АО', 'Нефтеюганск', 'Есенина', '49', '47', 2);
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Ханты-Мансийкий АО', 'Нефтеюганск', 'Есенина', '49', '47', 7);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Ханты-Мансийкий АО', 'Нефтеюганск', 'Есенина', '49', '47', 2);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Ханты-Мансийкий АО', 'Нефтеюганск', 'Есенина', '49', '47', 7);
 
 --Таблица призывника
 insert into Recruit(id_personal_affair) values (2);
@@ -123,6 +134,7 @@ insert into Employment (work_place, field_of_activity, state_accreditation, id_p
 insert into Education (degree, institution, id_personal_data) values ('Среднее', 'Школа Нефтеюганска', 2);
 insert into Education (degree, institution, id_personal_data) values ('Среднее', 'Школа Нефтеюганска', 7);
 insert into Education (degree, institution, id_personal_data) values ('Высшее', 'Вуз Нефтеюганска', 7);
+
 
 
 
@@ -151,9 +163,9 @@ insert into MedicalReport (medical_report_result, id_personal_affair) values ('�
 insert into AscribedCertificate (registration_date, deregistration_date, deregistration_reason, id_personal_affair) values ('2022-02-03', '2022-02-04', 'психически нездоров', 3);
 
 --Место жительства
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '192', 3);
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '192', 8);
-insert into LivindAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '192', 9);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '192', 3);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '192', 8);
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '192', 9);
 
 --Таблица призывника
 insert into Recruit(id_personal_affair) values (3);
@@ -174,5 +186,32 @@ insert into PersonalAffair(personal_affair, id_personal_data) values ('22', 22);
 insert into Conscription (conscription_season, conscription_date, id_personal_affair) values ('весенний', '2031-10-10', 1);
 
 
+
+
+
+--Призывник Циркунов
+insert into PersonalData (first_name, surname, father_name, birthday, gender, nationality, criminal_records, series, number, issued_by) values ('Циркунов', 'Максим', 'Пантелеонович', '2003-01-31', 'мужской', 'русский', false, '3217', '352433', 'OUFMS');
+
+--Личное дело
+insert into PersonalAffair(personal_affair, id_personal_data) values ('23', 23);
+
+--Медицинское заключение
+insert into MedicalReport (medical_report_result, id_personal_affair) values ('годен', 13);
+
+--Сертификат
+insert into AscribedCertificate (registration_date, id_personal_affair) values ('2021-09-16', 13);
+
+--Место жительства
+insert into LivingAddress (region, city, street, house, apartment, id_personal_data) values ('Кемеровская область', 'Новокузнецк', 'Кирова', '103', '173', 1);
+
+--Таблица призывника
+insert into Recruit(id_personal_affair) values (1);
+
+--Военные действия
+insert into MilitaryTicket (date_of_start_military_service, date_of_end_military_service, id_personal_affair) values ('2020-01-31','2021-01-31', 13);
+insert into MilitaryUnit (place_of_military_service, id_military_ticket) values ('Мотострелковые', 3);
+
+--Родственники
+insert into Relatives(kinship, generation, id_personal_data, id_recruit) values ('Отец', 1, 22, 4);
 
 
